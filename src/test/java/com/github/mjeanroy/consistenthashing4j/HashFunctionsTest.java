@@ -24,50 +24,25 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
-import java.util.Objects;
+import org.junit.jupiter.api.Test;
 
-public final class Node {
+import static org.assertj.core.api.Assertions.assertThat;
 
-	/**
-	 * Create new node.
-	 * @param name Node name.
-	 * @return The node.
-	 * @throws NullPointerException If {@code name} is {@code null}.
-	 * @throws IllegalArgumentException If {@code name} is empty or blank.
-	 */
-	public static Node newNode(String name) {
-		return new Node(name);
+class HashFunctionsTest {
+
+	@Test
+	void it_should_get_native_jdk_hash_function() {
+		String value = "192.168.1.18";
+		HashFunction hashFunction = HashFunctions.jdkHashFunction();
+		assertThat(hashFunction).isNotNull();
+		assertThat(hashFunction.compute(value)).isEqualTo(value.hashCode());
 	}
 
-	/**
-	 * Node Name, may be anything (logical name, ip address, etc.)
-	 */
-	private final String name;
-
-	private Node(String name) {
-		this.name = PreConditions.notBlank(name, "Node name must be defined");
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		}
-
-		if (o instanceof Node) {
-			Node n = (Node) o;
-			return Objects.equals(name, n.name);
-		}
-
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name);
+	@Test
+	void it_should_get_fnv1_32_hash_function() {
+		String value = "192.168.1.18";
+		HashFunction hashFunction = HashFunctions.fnv132HashFunction();
+		assertThat(hashFunction).isNotNull();
+		assertThat(hashFunction.compute(value)).isEqualTo(-1374478651);
 	}
 }

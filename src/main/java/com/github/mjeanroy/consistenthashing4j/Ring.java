@@ -24,6 +24,8 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -42,7 +44,7 @@ public final class Ring {
 	 * @param nodes The nodes.
 	 * @return The ring.
 	 */
-	public static Ring newRing(HashFunction hashFunction, List<Node> nodes) {
+	public static Ring newRing(HashFunction hashFunction, Collection<Node> nodes) {
 		PreConditions.notNull(hashFunction, "Cannot create ring without hash function");
 
 		Ring ring = new Ring(hashFunction);
@@ -59,8 +61,28 @@ public final class Ring {
 	 * @param nodes The nodes.
 	 * @return The ring.
 	 */
-	public static Ring newRing(List<Node> nodes) {
+	public static Ring newRing(Collection<Node> nodes) {
 		return newRing(HashFunctions.fnv132HashFunction(), nodes);
+	}
+
+	/**
+	 * Create new empty ring with given hash function.
+	 *
+	 * @param hashFunction Hash function.
+	 * @return The ring.
+	 * @throws NullPointerException If {@code hashFunction} is {@code null}
+	 */
+	public static Ring newRing(HashFunction hashFunction) {
+		return newRing(hashFunction, Collections.emptyList());
+	}
+
+	/**
+	 * Create new empty ring.
+	 *
+	 * @return The ring.
+	 */
+	public static Ring newRing() {
+		return newRing(HashFunctions.fnv132HashFunction(), Collections.emptyList());
 	}
 
 	/**
@@ -113,6 +135,15 @@ public final class Ring {
 	}
 
 	/**
+	 * Add new node into the ring.
+	 *
+	 * @param name Node name.
+	 */
+	public void addNode(String name) {
+		addNode(Node.newNode(name));
+	}
+
+	/**
 	 * Find appropriate node based on given value.
 	 *
 	 * @param value The value.
@@ -123,8 +154,14 @@ public final class Ring {
 		PreConditions.notNull(value, "Cannot find node for null value");
 
 		int hash = computeHash(value);
+		if (nodes.containsKey(hash)) {
+			return nodes.get(hash);
+		}
+
+		// Get next node on the ring.
 		SortedMap<Integer, Node> tailMap = nodes.tailMap(hash);
 		if (tailMap.isEmpty()) {
+			// If we don't have a "next" node, get the first one.
 			tailMap = nodes;
 		}
 

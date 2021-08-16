@@ -24,50 +24,17 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
-import java.util.Objects;
+import org.junit.jupiter.api.Test;
 
-public final class Node {
+import static org.assertj.core.api.Assertions.assertThat;
 
-	/**
-	 * Create new node.
-	 * @param name Node name.
-	 * @return The node.
-	 * @throws NullPointerException If {@code name} is {@code null}.
-	 * @throws IllegalArgumentException If {@code name} is empty or blank.
-	 */
-	public static Node newNode(String name) {
-		return new Node(name);
-	}
+class StringsTest {
 
-	/**
-	 * Node Name, may be anything (logical name, ip address, etc.)
-	 */
-	private final String name;
-
-	private Node(String name) {
-		this.name = PreConditions.notBlank(name, "Node name must be defined");
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (o == this) {
-			return true;
-		}
-
-		if (o instanceof Node) {
-			Node n = (Node) o;
-			return Objects.equals(name, n.name);
-		}
-
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name);
+	@Test
+	void it_should_check_if_string_is_blank() {
+		assertThat(Strings.isBlank(null)).isTrue();
+		assertThat(Strings.isBlank("")).isTrue();
+		assertThat(Strings.isBlank("   ")).isTrue();
+		assertThat(Strings.isBlank(" hello world ")).isFalse();
 	}
 }

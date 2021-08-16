@@ -61,20 +61,18 @@ public final class HashFunctions {
 	}
 
 	private static final class Fnv132HashFunction implements HashFunction {
+		private static final int FNV_32_PRIME = 16777619;
+		private static final int FNV_32_BASIS_OFFSET = 216613626;
+
 		@Override
 		public int compute(String value) {
-			final int p = 16777619;
+			byte[] bytes = value.getBytes();
+			int hash = FNV_32_BASIS_OFFSET;
 
-			int hash = (int) 2166136261L;
-			for (int i = 0; i < value.length(); i++) {
-				hash = (hash ^ value.charAt(i)) * p;
+			for (byte aByte : bytes) {
+				hash *= FNV_32_PRIME;
+				hash ^= aByte;
 			}
-
-			hash += hash << 13;
-			hash ^= hash >> 7;
-			hash += hash << 3;
-			hash ^= hash >> 17;
-			hash += hash << 5;
 
 			return hash;
 		}
