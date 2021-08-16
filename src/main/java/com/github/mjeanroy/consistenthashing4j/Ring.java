@@ -144,6 +144,26 @@ public final class Ring {
 	}
 
 	/**
+	 *
+	 * Remove given node from the ring.
+	 *
+	 * @param node Node to remove.
+	 */
+	public void removeNode(Node node) {
+		nodes.remove(computeHash(node.getName()));
+	}
+
+	/**
+	 *
+	 * Remove given node name from the ring.
+	 *
+	 * @param name Node name to remove.
+	 */
+	public void removeNode(String name) {
+		removeNode(Node.newNode(name));
+	}
+
+	/**
 	 * Find appropriate node based on given value.
 	 *
 	 * @param value The value.
@@ -169,6 +189,7 @@ public final class Ring {
 	}
 
 	private int computeHash(String value) {
+		// To keep it simple, force positive values.
 		return Math.abs(hashFunction.compute(value));
 	}
 }

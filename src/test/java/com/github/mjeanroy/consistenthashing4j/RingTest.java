@@ -98,6 +98,55 @@ class RingTest {
 		assertThat(ring.findNode("10").getName()).isEqualTo("2");
 	}
 
+	@Test
+	void it_should_get_node_for_given_value_and_remove_node() {
+		Ring ring = Ring.newRing(new FakeHashFunction());
+
+		ring.addNode("2");
+		ring.addNode("4");
+		ring.addNode("8");
+
+		assertThat(ring.findNode("0").getName()).isEqualTo("2");
+		assertThat(ring.findNode("1").getName()).isEqualTo("2");
+		assertThat(ring.findNode("2").getName()).isEqualTo("2");
+		assertThat(ring.findNode("3").getName()).isEqualTo("4");
+		assertThat(ring.findNode("4").getName()).isEqualTo("4");
+		assertThat(ring.findNode("5").getName()).isEqualTo("8");
+		assertThat(ring.findNode("6").getName()).isEqualTo("8");
+		assertThat(ring.findNode("7").getName()).isEqualTo("8");
+		assertThat(ring.findNode("8").getName()).isEqualTo("8");
+		assertThat(ring.findNode("9").getName()).isEqualTo("2");
+		assertThat(ring.findNode("10").getName()).isEqualTo("2");
+
+		ring.removeNode("4");
+
+		assertThat(ring.findNode("0").getName()).isEqualTo("2");
+		assertThat(ring.findNode("1").getName()).isEqualTo("2");
+		assertThat(ring.findNode("2").getName()).isEqualTo("2");
+		assertThat(ring.findNode("3").getName()).isEqualTo("8");
+		assertThat(ring.findNode("4").getName()).isEqualTo("8");
+		assertThat(ring.findNode("5").getName()).isEqualTo("8");
+		assertThat(ring.findNode("6").getName()).isEqualTo("8");
+		assertThat(ring.findNode("7").getName()).isEqualTo("8");
+		assertThat(ring.findNode("8").getName()).isEqualTo("8");
+		assertThat(ring.findNode("9").getName()).isEqualTo("2");
+		assertThat(ring.findNode("10").getName()).isEqualTo("2");
+
+		ring.removeNode(Node.newNode("8"));
+
+		assertThat(ring.findNode("0").getName()).isEqualTo("2");
+		assertThat(ring.findNode("1").getName()).isEqualTo("2");
+		assertThat(ring.findNode("2").getName()).isEqualTo("2");
+		assertThat(ring.findNode("3").getName()).isEqualTo("2");
+		assertThat(ring.findNode("4").getName()).isEqualTo("2");
+		assertThat(ring.findNode("5").getName()).isEqualTo("2");
+		assertThat(ring.findNode("6").getName()).isEqualTo("2");
+		assertThat(ring.findNode("7").getName()).isEqualTo("2");
+		assertThat(ring.findNode("8").getName()).isEqualTo("2");
+		assertThat(ring.findNode("9").getName()).isEqualTo("2");
+		assertThat(ring.findNode("10").getName()).isEqualTo("2");
+	}
+
 	private static class FakeHashFunction implements HashFunction {
 		@Override
 		public int compute(String value) {
