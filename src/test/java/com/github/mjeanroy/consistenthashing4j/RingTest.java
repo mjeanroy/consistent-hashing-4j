@@ -79,8 +79,11 @@ class RingTest {
 
 	@Test
 	void it_should_get_node_for_given_value() {
-		Ring ring = Ring.newRing(new FakeHashFunction());
+		RingConfiguration configuration = RingConfiguration.builder()
+				.hashFunction(new FakeHashFunction())
+				.build();
 
+		Ring ring = Ring.newRing(configuration);
 		ring.addNode("2");
 		ring.addNode("4");
 		ring.addNode("8");
@@ -100,8 +103,11 @@ class RingTest {
 
 	@Test
 	void it_should_get_node_for_given_value_and_remove_node() {
-		Ring ring = Ring.newRing(new FakeHashFunction());
+		RingConfiguration configuration = RingConfiguration.builder()
+				.hashFunction(new FakeHashFunction())
+				.build();
 
+		Ring ring = Ring.newRing(configuration);
 		ring.addNode("2");
 		ring.addNode("4");
 		ring.addNode("8");

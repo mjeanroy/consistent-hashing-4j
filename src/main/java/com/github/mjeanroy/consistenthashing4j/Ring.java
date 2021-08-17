@@ -39,14 +39,12 @@ public final class Ring {
 	/**
 	 * Create new ring with given nodes, each node being placed on the ring based on the given hash function.
 	 *
-	 * @param hashFunction The hash function.
+	 * @param configuration The ring configuration.
 	 * @param nodes The nodes.
 	 * @return The ring.
 	 */
-	public static Ring newRing(HashFunction hashFunction, Collection<Node> nodes) {
-		PreConditions.notNull(hashFunction, "Cannot create ring without hash function");
-
-		Ring ring = new Ring(hashFunction);
+	public static Ring newRing(RingConfiguration configuration, Collection<Node> nodes) {
+		Ring ring = new Ring(configuration);
 		for (Node node: nodes) {
 			ring.addNode(node);
 		}
@@ -61,18 +59,18 @@ public final class Ring {
 	 * @return The ring.
 	 */
 	public static Ring newRing(Collection<Node> nodes) {
-		return newRing(HashFunctions.fnv132HashFunction(), nodes);
+		return newRing(RingConfiguration.defaultConfiguration(), nodes);
 	}
 
 	/**
 	 * Create new empty ring with given hash function.
 	 *
-	 * @param hashFunction Hash function.
+	 * @param configuration Ring configuration.
 	 * @return The ring.
-	 * @throws NullPointerException If {@code hashFunction} is {@code null}
+	 * @throws NullPointerException If {@code configuration} is {@code null}
 	 */
-	public static Ring newRing(HashFunction hashFunction) {
-		return newRing(hashFunction, Collections.emptyList());
+	public static Ring newRing(RingConfiguration configuration) {
+		return newRing(configuration, Collections.emptyList());
 	}
 
 	/**
@@ -81,7 +79,7 @@ public final class Ring {
 	 * @return The ring.
 	 */
 	public static Ring newRing() {
-		return newRing(HashFunctions.fnv132HashFunction(), Collections.emptyList());
+		return newRing(RingConfiguration.defaultConfiguration(), Collections.emptyList());
 	}
 
 	/**
@@ -90,13 +88,13 @@ public final class Ring {
 	private final SortedMap<Integer, Node> nodes;
 
 	/**
-	 * Hash function.
+	 * Ring configuration.
 	 */
-	private final HashFunction hashFunction;
+	private final RingConfiguration configuration;
 
-	private Ring(HashFunction hashFunction) {
+	private Ring(RingConfiguration configuration) {
 		this.nodes = new TreeMap<>();
-		this.hashFunction = PreConditions.notNull(hashFunction, "Hash function must be defined");
+		this.configuration = PreConditions.notNull(configuration, "Ring configuration must be defined");
 	}
 
 	/**
@@ -189,6 +187,10 @@ public final class Ring {
 
 	private int computeHash(String value) {
 		// To keep it simple, force positive values.
-		return Math.abs(hashFunction.compute(value));
+		return Math.abs(hashFunction().compute(value));
+	}
+
+	private HashFunction hashFunction() {
+		return configuration.getHashFunction();
 	}
 }
