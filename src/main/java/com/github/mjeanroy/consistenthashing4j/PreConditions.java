@@ -147,4 +147,20 @@ final class PreConditions {
 
 		return value;
 	}
+
+	/**
+	 * Check that given value is positive (or equal to zero).
+	 *
+	 * @param value Value to check.
+	 * @param message Error message.
+	 * @return Given value.
+	 * @throws IllegalArgumentException If {@code value} is strictly less than zero.
+	 */
+	static int isPositive(int value, String message) {
+		if (value < 0) {
+			throw new IllegalArgumentException(message);
+		}
+
+		return value;
+	}
 }

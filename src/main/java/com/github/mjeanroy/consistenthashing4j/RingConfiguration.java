@@ -54,8 +54,11 @@ public final class RingConfiguration {
 	 */
 	private final HashFunction hashFunction;
 
-	private RingConfiguration(HashFunction hashFunction) {
+	private final int nbVirtualNodes;
+
+	private RingConfiguration(HashFunction hashFunction, int nbVirtualNodes) {
 		this.hashFunction = PreConditions.notNull(hashFunction, "Hash function must be defined");
+		this.nbVirtualNodes = PreConditions.isPositive(nbVirtualNodes, "Number of virtual node must be positive");
 	}
 
 	/**
@@ -67,6 +70,15 @@ public final class RingConfiguration {
 		return hashFunction;
 	}
 
+	/**
+	 * Get {@link #nbVirtualNodes}
+	 *
+	 * @return {@link #nbVirtualNodes}
+	 */
+	public int getNbVirtualNodes() {
+		return nbVirtualNodes;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
@@ -75,7 +87,7 @@ public final class RingConfiguration {
 
 		if (o instanceof RingConfiguration) {
 			RingConfiguration rc = (RingConfiguration) o;
-			return Objects.equals(hashFunction, rc.hashFunction);
+			return Objects.equals(hashFunction, rc.hashFunction) && Objects.equals(nbVirtualNodes, rc.nbVirtualNodes);
 		}
 
 		return false;
@@ -83,7 +95,7 @@ public final class RingConfiguration {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(hashFunction);
+		return Objects.hash(hashFunction, nbVirtualNodes);
 	}
 
 	/**
@@ -95,8 +107,14 @@ public final class RingConfiguration {
 		 */
 		private HashFunction hashFunction;
 
+		/**
+		 * Number of virtual nodes to add for each parent node on the ring.
+		 */
+		private int nbVirtualNodes;
+
 		private Builder() {
 			this.hashFunction = HashFunctions.fnv132HashFunction();
+			this.nbVirtualNodes = 0;
 		}
 
 		/**
@@ -111,13 +129,28 @@ public final class RingConfiguration {
 		}
 
 		/**
+		 * Update number of virtual nodes to manage for each parent node.
+		 *
+		 * @param nbVirtualNodes Number of virtual nodes.
+		 * @return The builder.
+		 */
+		public Builder nbVirtualNodes(int nbVirtualNodes) {
+			this.nbVirtualNodes = nbVirtualNodes;
+			return this;
+		}
+
+		/**
 		 * Build configuration.
 		 *
 		 * @return Configuration.
 		 * @throws NullPointerException If {@link #hashFunction} is {@code null}
+		 * @throws IllegalArgumentException If {@link #nbVirtualNodes} is strictly less than zero
 		 */
 		public RingConfiguration build() {
-			return new RingConfiguration(hashFunction);
+			return new RingConfiguration(
+					hashFunction,
+					nbVirtualNodes
+			);
 		}
 	}
 }
