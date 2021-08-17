@@ -24,12 +24,17 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
-public interface Node {
+import org.junit.jupiter.api.Test;
 
-	/**
-	 * Node name.
-	 *
-	 * @return Node name.
-	 */
-	String getName();
+import static org.assertj.core.api.Assertions.assertThat;
+
+class NodesTest {
+
+	@Test
+	void it_should_create_node() {
+		String name = "192.168.1.18";
+		Node node = Nodes.newNode(name);
+		assertThat(node).isNotNull();
+		assertThat(node.getName()).isEqualTo(name);
+	}
 }

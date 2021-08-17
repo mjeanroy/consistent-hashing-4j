@@ -24,12 +24,23 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
-public interface Node {
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
-	/**
-	 * Node name.
-	 *
-	 * @return Node name.
-	 */
-	String getName();
+import static org.assertj.core.api.Assertions.assertThat;
+
+class DefaultNodeTest {
+
+	@Test
+	void it_should_create_node() {
+		String name = "192.168.1.18";
+		Node node = new DefaultNode(name);
+		assertThat(node).isNotNull();
+		assertThat(node.getName()).isEqualTo(name);
+	}
+
+	@Test
+	void it_should_implement_equals_hash_code() {
+		EqualsVerifier.forClass(DefaultNode.class).verify();
+	}
 }

@@ -26,7 +26,6 @@ package com.github.mjeanroy.consistenthashing4j;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -140,7 +139,7 @@ public final class Ring {
 	 * @param name Node name.
 	 */
 	public void addNode(String name) {
-		addNode(Node.newNode(name));
+		addNode(Nodes.newNode(name));
 	}
 
 	/**
@@ -160,7 +159,7 @@ public final class Ring {
 	 * @param name Node name to remove.
 	 */
 	public void removeNode(String name) {
-		removeNode(Node.newNode(name));
+		removeNode(Nodes.newNode(name));
 	}
 
 	/**

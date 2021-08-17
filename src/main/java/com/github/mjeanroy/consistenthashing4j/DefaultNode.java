@@ -24,23 +24,40 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Test;
+import java.util.Objects;
 
-import static org.assertj.core.api.Assertions.assertThat;
+final class DefaultNode implements Node {
 
-class NodeTest {
+	/**
+	 * Node Name, may be anything (logical name, ip address, etc.)
+	 */
+	private final String name;
 
-	@Test
-	void it_should_create_node() {
-		String name = "192.168.1.18";
-		Node node = Node.newNode(name);
-		assertThat(node).isNotNull();
-		assertThat(node.getName()).isEqualTo(name);
+	DefaultNode(String name) {
+		this.name = PreConditions.notBlank(name, "Node name must be defined");
 	}
 
-	@Test
-	void it_should_implement_equals_hash_code() {
-		EqualsVerifier.forClass(Node.class).verify();
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+
+		if (o instanceof DefaultNode) {
+			DefaultNode n = (DefaultNode) o;
+			return Objects.equals(name, n.name);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
 	}
 }

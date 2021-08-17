@@ -36,10 +36,10 @@ class RingTest {
 	@Test
 	void it_should_create_ring() {
 		List<Node> nodes = asList(
-				Node.newNode("192.168.1.1"),
-				Node.newNode("192.168.1.2"),
-				Node.newNode("192.168.1.3"),
-				Node.newNode("192.168.1.4")
+				Nodes.newNode("192.168.1.1"),
+				Nodes.newNode("192.168.1.2"),
+				Nodes.newNode("192.168.1.3"),
+				Nodes.newNode("192.168.1.4")
 		);
 
 		Ring ring = Ring.newRing(
@@ -54,10 +54,10 @@ class RingTest {
 	@Test
 	void it_should_create_ring_and_add_node() {
 		Ring ring = Ring.newRing();
-		ring.addNode(Node.newNode("192.168.1.1"));
-		ring.addNode(Node.newNode("192.168.1.2"));
-		ring.addNode(Node.newNode("192.168.1.3"));
-		ring.addNode(Node.newNode("192.168.1.4"));
+		ring.addNode(Nodes.newNode("192.168.1.1"));
+		ring.addNode(Nodes.newNode("192.168.1.2"));
+		ring.addNode(Nodes.newNode("192.168.1.3"));
+		ring.addNode(Nodes.newNode("192.168.1.4"));
 
 		assertThat(ring).isNotNull();
 		assertThat(ring.isEmpty()).isFalse();
@@ -132,7 +132,7 @@ class RingTest {
 		assertThat(ring.findNode("9").getName()).isEqualTo("2");
 		assertThat(ring.findNode("10").getName()).isEqualTo("2");
 
-		ring.removeNode(Node.newNode("8"));
+		ring.removeNode(Nodes.newNode("8"));
 
 		assertThat(ring.findNode("0").getName()).isEqualTo("2");
 		assertThat(ring.findNode("1").getName()).isEqualTo("2");
