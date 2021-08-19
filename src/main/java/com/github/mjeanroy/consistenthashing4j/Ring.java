@@ -27,9 +27,13 @@ package com.github.mjeanroy.consistenthashing4j;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Implementation of ring.
@@ -87,7 +91,7 @@ public final class Ring {
 	/**
 	 * List of nodes in the ring.
 	 */
-	private final SortedMap<Integer, Node> nodes;
+	private final SortedMap<Integer, RingNode> nodes;
 
 	/**
 	 * Ring configuration.
@@ -125,18 +129,18 @@ public final class Ring {
 	public void addNode(Node node) {
 		PreConditions.notNull(node, "Node cannot be null");
 
-		int hash = computeHash(node.getName());
+		int hash = computeHash(node);
 		if (nodes.containsKey(hash)) {
 			throw new IllegalArgumentException("Node with hash <" + hash + "> already exists!");
 		}
 
 		List<VirtualNode> virtualNodes = createVirtualNodes(node);
 
-		this.nodes.put(hash, node);
+		this.nodes.put(hash, RingNode.of(node, virtualNodes));
 
 		// Add virtual node on the ring.
 		for (VirtualNode virtualNode : virtualNodes) {
-			this.nodes.put(computeHash(virtualNode.getName()), virtualNode);
+			this.nodes.put(computeHash(virtualNode), RingNode.of(virtualNode));
 		}
 	}
 
@@ -156,7 +160,7 @@ public final class Ring {
 	 * @param node Node to remove.
 	 */
 	public void removeNode(Node node) {
-		nodes.remove(computeHash(node.getName()));
+		nodes.remove(computeHash(node));
 	}
 
 	/**
@@ -181,23 +185,27 @@ public final class Ring {
 
 		int hash = computeHash(value);
 		if (nodes.containsKey(hash)) {
-			return nodes.get(hash);
+			return nodes.get(hash).getNode();
 		}
 
 		// Get next node on the ring.
-		SortedMap<Integer, Node> tailMap = nodes.tailMap(hash);
+		SortedMap<Integer, RingNode> tailMap = nodes.tailMap(hash);
 		if (tailMap.isEmpty()) {
 			// If we don't have a "next" node, get the first one.
 			tailMap = nodes;
 		}
 
-		Node matchedNode = tailMap.get(tailMap.firstKey());
+		Node matchedNode = tailMap.get(tailMap.firstKey()).getNode();
 		return matchedNode instanceof VirtualNode ? ((VirtualNode) matchedNode).getParentNode() : matchedNode;
 	}
 
 	private int computeHash(String value) {
 		// To keep it simple, force positive values.
 		return Math.abs(hashFunction().compute(value));
+	}
+
+	private int computeHash(Node node) {
+		return computeHash(node.getName());
 	}
 
 	private List<VirtualNode> createVirtualNodes(Node parentNode) {
@@ -207,19 +215,22 @@ public final class Ring {
 		}
 
 		List<VirtualNode> virtualNodes = new ArrayList<>(nbVirtualNodes);
+		Set<Integer> virtualNodesHash = new HashSet<>();
 		for (int i = 1; i <= nbVirtualNodes; ++i) {
 			VirtualNode virtualNode = new VirtualNode(parentNode, i);
-			int hash = computeHash(virtualNode.getName());
-			if (nodes.containsKey(hash)) {
+
+			int hash = computeHash(virtualNode);
+			if (nodes.containsKey(hash) || virtualNodesHash.contains(hash)) {
 				throw new IllegalArgumentException(
 						"Cannot create virtual node of <" + parentNode.getName() + ">, a node with hash <" + hash + "> already exists!"
 				);
 			}
 
 			virtualNodes.add(virtualNode);
+			virtualNodesHash.add(hash);
 		}
 
-		return virtualNodes;
+		return unmodifiableList(virtualNodes);
 	}
 
 	private HashFunction hashFunction() {

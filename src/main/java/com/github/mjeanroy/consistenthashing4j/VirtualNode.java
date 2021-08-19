@@ -45,6 +45,10 @@ class VirtualNode implements Node {
 		return parentNode;
 	}
 
+	int getIdx() {
+		return idx;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
