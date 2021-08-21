@@ -46,6 +46,10 @@ final class VirtualNode implements Node {
 		return parentNode;
 	}
 
+	String getId() {
+		return id;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
@@ -63,5 +67,13 @@ final class VirtualNode implements Node {
 	@Override
 	public int hashCode() {
 		return Objects.hash(parentNode, id);
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.of(getClass())
+				.append("parentNode", parentNode)
+				.append("id", id)
+				.build();
 	}
 }

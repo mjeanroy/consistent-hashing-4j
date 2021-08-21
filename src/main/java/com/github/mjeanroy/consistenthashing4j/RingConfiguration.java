@@ -98,6 +98,14 @@ public final class RingConfiguration {
 		return Objects.hash(hashFunction, nbVirtualNodes);
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.of(getClass())
+				.append("hashFunction", hashFunction)
+				.append("nbVirtualNodes", nbVirtualNodes)
+				.build();
+	}
+
 	/**
 	 * Builder for {@link RingConfiguration}
 	 */

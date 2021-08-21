@@ -43,4 +43,14 @@ class DefaultNodeTest {
 	void it_should_implement_equals_hash_code() {
 		EqualsVerifier.forClass(DefaultNode.class).verify();
 	}
+
+	@Test
+	void it_should_implement_to_string() {
+		DefaultNode node = new DefaultNode("192.168.1.1");
+		assertThat(node).hasToString(
+				"DefaultNode{" +
+						"name: \"192.168.1.1\"" +
+				"}"
+		);
+	}
 }

@@ -24,35 +24,46 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class VirtualNodeTest {
+class ToStringBuilderTest {
 
 	@Test
-	void it_should_create_virtual_node() {
-		Node node = Nodes.of("192.168.1.1");
-		VirtualNode virtualNode = new VirtualNode(node);
-		assertThat(virtualNode.getParentNode()).isSameAs(node);
-		assertThat(virtualNode.getName()).isNotEmpty().isNotEqualTo(node.getName());
-	}
+	void it_should_create_final_string() {
+		String value = ToStringBuilder.of(getClass())
+				.append("field1", "foo")
+				.append("field3", new Klass1("bar"))
+				.append("field4", null)
+				.build();
 
-	@Test
-	void it_should_implement_equals_hash_code() {
-		EqualsVerifier.forClass(VirtualNode.class).verify();
-	}
-
-	@Test
-	void it_should_implement_to_string() {
-		Node node = Nodes.of("192.168.1.1");
-		VirtualNode virtualNode = new VirtualNode(node);
-		assertThat(virtualNode).hasToString(
-				"VirtualNode{" +
-						"parentNode: DefaultNode{name: \"192.168.1.1\"}, " +
-						"id: \"" + virtualNode.getId() + "\"" +
+		assertThat(value).isEqualTo(
+				"ToStringBuilderTest{" +
+						"field1: \"foo\", " +
+						"field3: toString: bar, " +
+						"field4: null" +
 				"}"
 		);
 	}
+
+	@Test
+	void it_should_create_final_string_without_fields() {
+		String value = ToStringBuilder.of(getClass()).build();
+		assertThat(value).isEqualTo("ToStringBuilderTest{}");
+	}
+
+	private static class Klass1 {
+		private final String value;
+
+		private Klass1(String value) {
+			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return "toString: " + value;
+		}
+	}
+
 }

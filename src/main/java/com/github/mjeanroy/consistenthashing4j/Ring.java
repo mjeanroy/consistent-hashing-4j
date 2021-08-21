@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -82,7 +83,7 @@ public final class Ring {
 	 *
 	 * @return The ring.
 	 */
-	public static Ring of() {
+	public static Ring emptyRing() {
 		return Ring.of(RingConfiguration.defaultConfiguration(), Collections.emptyList());
 	}
 
@@ -196,6 +197,33 @@ public final class Ring {
 
 		Node matchedNode = tailMap.get(tailMap.firstKey());
 		return getMainNode(matchedNode);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+
+		if (o instanceof Ring) {
+			Ring r = (Ring) o;
+			return Objects.equals(nodes, r.nodes) && Objects.equals(configuration, r.configuration);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(nodes, configuration);
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.of(getClass())
+				.append("nodes", nodes)
+				.append("configuration", configuration)
+				.build();
 	}
 
 	private Node getMainNode(Node node) {

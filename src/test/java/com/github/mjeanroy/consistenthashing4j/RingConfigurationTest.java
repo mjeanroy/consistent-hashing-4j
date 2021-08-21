@@ -53,4 +53,20 @@ class RingConfigurationTest {
 	void it_should_implement_equals_hash_code() {
 		EqualsVerifier.forClass(RingConfiguration.class).verify();
 	}
+
+	@Test
+	void it_should_implement_to_string() {
+		HashFunction hashFunction = HashFunctions.jdkHashFunction();
+		RingConfiguration configuration = RingConfiguration.builder()
+				.hashFunction(hashFunction)
+				.nbVirtualNodes(2)
+				.build();
+
+		assertThat(configuration).hasToString(
+				"RingConfiguration{" +
+						"hashFunction: " + hashFunction.toString() + ", " +
+						"nbVirtualNodes: 2" +
+				"}"
+		);
+	}
 }

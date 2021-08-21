@@ -60,4 +60,9 @@ final class DefaultNode implements Node {
 	public int hashCode() {
 		return Objects.hash(name);
 	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.of(getClass()).append("name", name).build();
+	}
 }

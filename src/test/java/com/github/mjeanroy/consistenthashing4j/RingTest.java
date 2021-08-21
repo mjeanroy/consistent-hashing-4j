@@ -24,6 +24,7 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -53,7 +54,7 @@ class RingTest {
 
 	@Test
 	void it_should_create_ring_and_add_node() {
-		Ring ring = Ring.of();
+		Ring ring = Ring.emptyRing();
 		ring.addNode(Nodes.of("192.168.1.1"));
 		ring.addNode(Nodes.of("192.168.1.2"));
 		ring.addNode(Nodes.of("192.168.1.3"));
@@ -66,7 +67,7 @@ class RingTest {
 
 	@Test
 	void it_should_add_node_names() {
-		Ring ring = Ring.of();
+		Ring ring = Ring.emptyRing();
 		ring.addNode("192.168.1.1");
 		ring.addNode("192.168.1.2");
 		ring.addNode("192.168.1.3");
@@ -167,10 +168,46 @@ class RingTest {
 		assertThat(ring.size()).isEqualTo(9);
 	}
 
+	@Test
+	void it_should_implement_equals_hash_code() {
+		EqualsVerifier.forClass(Ring.class).verify();
+	}
+
+	@Test
+	void it_should_implement_to_string() {
+		RingConfiguration configuration = RingConfiguration.builder()
+				.hashFunction(new FakeHashFunction())
+				.build();
+
+		Ring ring = Ring.of(configuration);
+		ring.addNode("1");
+		ring.addNode("2");
+		ring.addNode("3");
+
+		assertThat(ring).hasToString(
+				"Ring{" +
+						"nodes: {" +
+							"1=DefaultNode{name: \"1\"}, " +
+							"2=DefaultNode{name: \"2\"}, " +
+							"3=DefaultNode{name: \"3\"}" +
+						"}, " +
+						"configuration: RingConfiguration{" +
+							"hashFunction: FakeHashFunction, " +
+							"nbVirtualNodes: 0" +
+						"}" +
+				"}"
+		);
+	}
+
 	private static class FakeHashFunction implements HashFunction {
 		@Override
 		public int compute(String value) {
 			return Integer.parseInt(value);
+		}
+
+		@Override
+		public String toString() {
+			return getClass().getSimpleName();
 		}
 	}
 }
