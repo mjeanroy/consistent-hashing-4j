@@ -24,10 +24,14 @@
 
 package com.github.mjeanroy.consistenthashing4j;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Implementation of ring.
@@ -123,12 +127,20 @@ public final class Ring {
 	public void addNode(Node node) {
 		PreConditions.notNull(node, "Node cannot be null");
 
-		int hash = computeHash(node.getName());
+		int hash = computeHash(node);
 		if (nodes.containsKey(hash)) {
 			throw new IllegalArgumentException("Node with hash <" + hash + "> already exists!");
 		}
 
+		List<VirtualNode> virtualNodes = createVirtualNodes(node);
+
+		// Add main node on the ring.
 		this.nodes.put(hash, node);
+
+		// Add virtual node on the ring.
+		for (VirtualNode virtualNode : virtualNodes) {
+			this.nodes.put(computeHash(virtualNode), virtualNode);
+		}
 	}
 
 	/**
@@ -147,7 +159,7 @@ public final class Ring {
 	 * @param node Node to remove.
 	 */
 	public void removeNode(Node node) {
-		nodes.remove(computeHash(node.getName()));
+		nodes.remove(computeHash(node));
 	}
 
 	/**
@@ -172,7 +184,7 @@ public final class Ring {
 
 		int hash = computeHash(value);
 		if (nodes.containsKey(hash)) {
-			return nodes.get(hash);
+			return getMainNode(nodes.get(hash));
 		}
 
 		// Get next node on the ring.
@@ -182,7 +194,12 @@ public final class Ring {
 			tailMap = nodes;
 		}
 
-		return tailMap.get(tailMap.firstKey());
+		Node matchedNode = tailMap.get(tailMap.firstKey());
+		return getMainNode(matchedNode);
+	}
+
+	private Node getMainNode(Node node) {
+		return node instanceof VirtualNode ? ((VirtualNode) node).getParentNode() : node;
 	}
 
 	private int computeHash(String value) {
@@ -190,7 +207,30 @@ public final class Ring {
 		return Math.abs(hashFunction().compute(value));
 	}
 
+	private int computeHash(Node node) {
+		return computeHash(node.getName());
+	}
+
+	private List<VirtualNode> createVirtualNodes(Node parentNode) {
+		int nbVirtualNodes = nbVirtualNodes();
+		if (nbVirtualNodes == 0) {
+			return Collections.emptyList();
+		}
+
+		List<VirtualNode> virtualNodes = new ArrayList<>(nbVirtualNodes);
+		for (int i = 0; i < nbVirtualNodes; ++i) {
+			VirtualNode virtualNode = new VirtualNode(parentNode);
+			virtualNodes.add(virtualNode);
+		}
+
+		return unmodifiableList(virtualNodes);
+	}
+
 	private HashFunction hashFunction() {
 		return configuration.getHashFunction();
+	}
+
+	private int nbVirtualNodes() {
+		return configuration.getNbVirtualNodes();
 	}
 }

@@ -153,6 +153,20 @@ class RingTest {
 		assertThat(ring.findNode("10").getName()).isEqualTo("2");
 	}
 
+	@Test
+	void it_should_create_ring_with_virtual_node() {
+		RingConfiguration configuration = RingConfiguration.builder()
+				.nbVirtualNodes(2)
+				.build();
+
+		Ring ring = Ring.newRing(configuration);
+		ring.addNode("192.168.1.1");
+		ring.addNode("192.168.1.2");
+		ring.addNode("192.168.1.3");
+
+		assertThat(ring.size()).isEqualTo(9);
+	}
+
 	private static class FakeHashFunction implements HashFunction {
 		@Override
 		public int compute(String value) {
