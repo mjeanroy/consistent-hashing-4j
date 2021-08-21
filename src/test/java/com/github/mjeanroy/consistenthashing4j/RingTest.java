@@ -183,6 +183,20 @@ class RingTest {
 	}
 
 	@Test
+	void it_should_remove_node_and_all_its_virtual_nodes() {
+		RingConfiguration configuration = RingConfiguration.defaultConfiguration();
+
+		Ring ring = Ring.of(configuration);
+		ring.addNode("192.168.1.1", 3);
+		ring.addNode("192.168.1.2", 4);
+		ring.addNode("192.168.1.3", 5);
+		assertThat(ring.size()).isEqualTo(15);
+
+		ring.removeNode("192.168.1.2");
+		assertThat(ring.size()).isEqualTo(10);
+	}
+
+	@Test
 	void it_should_implement_equals_hash_code() {
 		EqualsVerifier.forClass(Ring.class).verify();
 	}
@@ -201,9 +215,9 @@ class RingTest {
 		assertThat(ring).hasToString(
 				"Ring{" +
 						"nodes: {" +
-							"1=DefaultNode{name: \"1\"}, " +
-							"2=DefaultNode{name: \"2\"}, " +
-							"3=DefaultNode{name: \"3\"}" +
+							"1=RingNode{node: DefaultNode{name: \"1\"}, virtualNodes: []}, " +
+							"2=RingNode{node: DefaultNode{name: \"2\"}, virtualNodes: []}, " +
+							"3=RingNode{node: DefaultNode{name: \"3\"}, virtualNodes: []}" +
 						"}, " +
 						"configuration: RingConfiguration{" +
 							"hashFunction: FakeHashFunction, " +

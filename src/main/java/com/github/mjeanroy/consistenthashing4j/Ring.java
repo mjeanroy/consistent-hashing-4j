@@ -90,7 +90,7 @@ public final class Ring {
 	/**
 	 * List of nodes in the ring.
 	 */
-	private final SortedMap<Integer, Node> nodes;
+	private final SortedMap<Integer, RingNode> nodes;
 
 	/**
 	 * Ring configuration.
@@ -164,7 +164,13 @@ public final class Ring {
 	 * @param node Node to remove.
 	 */
 	public void removeNode(Node node) {
-		nodes.remove(computeHash(node));
+		RingNode removedNode = nodes.remove(computeHash(node));
+
+		if (removedNode != null) {
+			for (VirtualNode virtualNode : removedNode.getVirtualNodes()) {
+				nodes.remove(computeHash(virtualNode));
+			}
+		}
 	}
 
 	/**
@@ -195,12 +201,12 @@ public final class Ring {
 		List<VirtualNode> virtualNodes = createVirtualNodes(node, nbVirtualNodes);
 
 		// Add main node on the ring.
-		this.nodes.put(hash, node);
+		this.nodes.put(hash, RingNode.of(node, virtualNodes));
 
 		// Add virtual node on the ring.
 		if (virtualNodes.size() > 0) {
 			for (VirtualNode virtualNode : virtualNodes) {
-				this.nodes.put(computeHash(virtualNode), virtualNode);
+				this.nodes.put(computeHash(virtualNode), RingNode.of(virtualNode));
 			}
 		}
 	}
@@ -217,18 +223,17 @@ public final class Ring {
 
 		int hash = computeHash(value);
 		if (nodes.containsKey(hash)) {
-			return getMainNode(nodes.get(hash));
+			return nodes.get(hash).rootNode();
 		}
 
 		// Get next node on the ring.
-		SortedMap<Integer, Node> tailMap = nodes.tailMap(hash);
+		SortedMap<Integer, RingNode> tailMap = nodes.tailMap(hash);
 		if (tailMap.isEmpty()) {
 			// If we don't have a "next" node, get the first one.
 			tailMap = nodes;
 		}
 
-		Node matchedNode = tailMap.get(tailMap.firstKey());
-		return getMainNode(matchedNode);
+		return tailMap.get(tailMap.firstKey()).rootNode();
 	}
 
 	@Override
@@ -256,10 +261,6 @@ public final class Ring {
 				.append("nodes", nodes)
 				.append("configuration", configuration)
 				.build();
-	}
-
-	private Node getMainNode(Node node) {
-		return node instanceof VirtualNode ? ((VirtualNode) node).getParentNode() : node;
 	}
 
 	private int computeHash(String value) {
