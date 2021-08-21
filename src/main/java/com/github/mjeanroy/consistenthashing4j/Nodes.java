@@ -9,7 +9,7 @@ public class Nodes {
 	 * @throws NullPointerException If {@code name} is {@code null}.
 	 * @throws IllegalArgumentException If {@code name} is empty or blank.
 	 */
-	public static Node newNode(String name) {
+	public static Node of(String name) {
 		return new DefaultNode(name);
 	}
 }

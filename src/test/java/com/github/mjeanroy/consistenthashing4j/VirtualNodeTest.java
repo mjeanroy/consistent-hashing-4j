@@ -33,7 +33,7 @@ class VirtualNodeTest {
 
 	@Test
 	void it_should_create_virtual_node() {
-		Node node = Nodes.newNode("192.168.1.1");
+		Node node = Nodes.of("192.168.1.1");
 		VirtualNode virtualNode = new VirtualNode(node);
 		assertThat(virtualNode.getParentNode()).isSameAs(node);
 		assertThat(virtualNode.getName()).isNotEmpty().isNotEqualTo(node.getName());

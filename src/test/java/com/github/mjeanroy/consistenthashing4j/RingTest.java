@@ -36,13 +36,13 @@ class RingTest {
 	@Test
 	void it_should_create_ring() {
 		List<Node> nodes = asList(
-				Nodes.newNode("192.168.1.1"),
-				Nodes.newNode("192.168.1.2"),
-				Nodes.newNode("192.168.1.3"),
-				Nodes.newNode("192.168.1.4")
+				Nodes.of("192.168.1.1"),
+				Nodes.of("192.168.1.2"),
+				Nodes.of("192.168.1.3"),
+				Nodes.of("192.168.1.4")
 		);
 
-		Ring ring = Ring.newRing(
+		Ring ring = Ring.of(
 				nodes
 		);
 
@@ -53,11 +53,11 @@ class RingTest {
 
 	@Test
 	void it_should_create_ring_and_add_node() {
-		Ring ring = Ring.newRing();
-		ring.addNode(Nodes.newNode("192.168.1.1"));
-		ring.addNode(Nodes.newNode("192.168.1.2"));
-		ring.addNode(Nodes.newNode("192.168.1.3"));
-		ring.addNode(Nodes.newNode("192.168.1.4"));
+		Ring ring = Ring.of();
+		ring.addNode(Nodes.of("192.168.1.1"));
+		ring.addNode(Nodes.of("192.168.1.2"));
+		ring.addNode(Nodes.of("192.168.1.3"));
+		ring.addNode(Nodes.of("192.168.1.4"));
 
 		assertThat(ring).isNotNull();
 		assertThat(ring.isEmpty()).isFalse();
@@ -66,7 +66,7 @@ class RingTest {
 
 	@Test
 	void it_should_add_node_names() {
-		Ring ring = Ring.newRing();
+		Ring ring = Ring.of();
 		ring.addNode("192.168.1.1");
 		ring.addNode("192.168.1.2");
 		ring.addNode("192.168.1.3");
@@ -83,7 +83,7 @@ class RingTest {
 				.hashFunction(new FakeHashFunction())
 				.build();
 
-		Ring ring = Ring.newRing(configuration);
+		Ring ring = Ring.of(configuration);
 		ring.addNode("2");
 		ring.addNode("4");
 		ring.addNode("8");
@@ -107,7 +107,7 @@ class RingTest {
 				.hashFunction(new FakeHashFunction())
 				.build();
 
-		Ring ring = Ring.newRing(configuration);
+		Ring ring = Ring.of(configuration);
 		ring.addNode("2");
 		ring.addNode("4");
 		ring.addNode("8");
@@ -138,7 +138,7 @@ class RingTest {
 		assertThat(ring.findNode("9").getName()).isEqualTo("2");
 		assertThat(ring.findNode("10").getName()).isEqualTo("2");
 
-		ring.removeNode(Nodes.newNode("8"));
+		ring.removeNode(Nodes.of("8"));
 
 		assertThat(ring.findNode("0").getName()).isEqualTo("2");
 		assertThat(ring.findNode("1").getName()).isEqualTo("2");
@@ -159,7 +159,7 @@ class RingTest {
 				.nbVirtualNodes(2)
 				.build();
 
-		Ring ring = Ring.newRing(configuration);
+		Ring ring = Ring.of(configuration);
 		ring.addNode("192.168.1.1");
 		ring.addNode("192.168.1.2");
 		ring.addNode("192.168.1.3");

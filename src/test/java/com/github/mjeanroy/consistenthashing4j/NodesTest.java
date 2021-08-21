@@ -33,7 +33,7 @@ class NodesTest {
 	@Test
 	void it_should_create_node() {
 		String name = "192.168.1.18";
-		Node node = Nodes.newNode(name);
+		Node node = Nodes.of(name);
 		assertThat(node).isNotNull();
 		assertThat(node.getName()).isEqualTo(name);
 	}

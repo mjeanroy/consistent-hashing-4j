@@ -47,7 +47,7 @@ public final class Ring {
 	 * @param nodes The nodes.
 	 * @return The ring.
 	 */
-	public static Ring newRing(RingConfiguration configuration, Collection<Node> nodes) {
+	public static Ring of(RingConfiguration configuration, Collection<Node> nodes) {
 		Ring ring = new Ring(configuration);
 		for (Node node: nodes) {
 			ring.addNode(node);
@@ -62,8 +62,8 @@ public final class Ring {
 	 * @param nodes The nodes.
 	 * @return The ring.
 	 */
-	public static Ring newRing(Collection<Node> nodes) {
-		return newRing(RingConfiguration.defaultConfiguration(), nodes);
+	public static Ring of(Collection<Node> nodes) {
+		return Ring.of(RingConfiguration.defaultConfiguration(), nodes);
 	}
 
 	/**
@@ -73,8 +73,8 @@ public final class Ring {
 	 * @return The ring.
 	 * @throws NullPointerException If {@code configuration} is {@code null}
 	 */
-	public static Ring newRing(RingConfiguration configuration) {
-		return newRing(configuration, Collections.emptyList());
+	public static Ring of(RingConfiguration configuration) {
+		return Ring.of(configuration, Collections.emptyList());
 	}
 
 	/**
@@ -82,8 +82,8 @@ public final class Ring {
 	 *
 	 * @return The ring.
 	 */
-	public static Ring newRing() {
-		return newRing(RingConfiguration.defaultConfiguration(), Collections.emptyList());
+	public static Ring of() {
+		return Ring.of(RingConfiguration.defaultConfiguration(), Collections.emptyList());
 	}
 
 	/**
@@ -149,7 +149,7 @@ public final class Ring {
 	 * @param name Node name.
 	 */
 	public void addNode(String name) {
-		addNode(Nodes.newNode(name));
+		addNode(Nodes.of(name));
 	}
 
 	/**
@@ -169,7 +169,7 @@ public final class Ring {
 	 * @param name Node name to remove.
 	 */
 	public void removeNode(String name) {
-		removeNode(Nodes.newNode(name));
+		removeNode(Nodes.of(name));
 	}
 
 	/**
