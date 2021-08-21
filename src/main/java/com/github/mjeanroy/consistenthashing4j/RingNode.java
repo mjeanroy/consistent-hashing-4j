@@ -59,7 +59,8 @@ final class RingNode {
 	}
 
 	Node rootNode() {
-		return node instanceof VirtualNode ? ((VirtualNode) node).getParentNode() : node;
+		Node rootNode = node.getRootNode();
+		return rootNode != null ? rootNode : node;
 	}
 
 	@Override

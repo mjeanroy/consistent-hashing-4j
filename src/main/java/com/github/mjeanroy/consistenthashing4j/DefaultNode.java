@@ -43,6 +43,11 @@ final class DefaultNode implements Node {
 	}
 
 	@Override
+	public Node getRootNode() {
+		return this;
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if (o == this) {
 			return true;

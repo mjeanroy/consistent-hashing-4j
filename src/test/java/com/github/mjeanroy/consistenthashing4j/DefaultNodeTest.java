@@ -37,6 +37,7 @@ class DefaultNodeTest {
 		Node node = new DefaultNode(name);
 		assertThat(node).isNotNull();
 		assertThat(node.getName()).isEqualTo(name);
+		assertThat(node.getRootNode()).isSameAs(node);
 	}
 
 	@Test

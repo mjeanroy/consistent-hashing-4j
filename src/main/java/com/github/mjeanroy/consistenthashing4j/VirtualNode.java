@@ -29,21 +29,22 @@ import java.util.UUID;
 
 final class VirtualNode implements Node {
 
-	private final Node parentNode;
+	private final Node rootNode;
 	private final String id;
 
-	VirtualNode(Node parentNode) {
-		this.parentNode = PreConditions.notNull(parentNode, "Parent node must be defined");
+	VirtualNode(Node rootNode) {
+		this.rootNode = PreConditions.notNull(rootNode, "Root node must be defined");
 		this.id = UUID.randomUUID().toString();
 	}
 
 	@Override
 	public String getName() {
-		return "@@@" + parentNode.getName() + "@@@" + id + "@@@";
+		return "@@@" + rootNode.getName() + "@@@" + id + "@@@";
 	}
 
-	Node getParentNode() {
-		return parentNode;
+	@Override
+	public Node getRootNode() {
+		return rootNode;
 	}
 
 	String getId() {
@@ -58,7 +59,7 @@ final class VirtualNode implements Node {
 
 		if (o instanceof VirtualNode) {
 			VirtualNode vn = (VirtualNode) o;
-			return Objects.equals(parentNode, vn.parentNode) && Objects.equals(id, vn.id);
+			return Objects.equals(rootNode, vn.rootNode) && Objects.equals(id, vn.id);
 		}
 
 		return false;
@@ -66,13 +67,13 @@ final class VirtualNode implements Node {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(parentNode, id);
+		return Objects.hash(rootNode, id);
 	}
 
 	@Override
 	public String toString() {
 		return ToStringBuilder.of(getClass())
-				.append("parentNode", parentNode)
+				.append("rootNode", rootNode)
 				.append("id", id)
 				.build();
 	}

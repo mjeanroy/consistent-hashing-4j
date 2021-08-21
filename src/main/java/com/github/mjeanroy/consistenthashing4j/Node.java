@@ -32,4 +32,11 @@ public interface Node {
 	 * @return Node name.
 	 */
 	String getName();
+
+	/**
+	 * Get the root node.
+	 *
+	 * @return Root node.
+	 */
+	Node getRootNode();
 }

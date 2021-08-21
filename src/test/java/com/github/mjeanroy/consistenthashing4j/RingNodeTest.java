@@ -81,8 +81,8 @@ class RingNodeTest {
 				"RingNode{" +
 						"node: DefaultNode{name: \"192.168.1.1\"}, " +
 						"virtualNodes: [" +
-							"VirtualNode{parentNode: DefaultNode{name: \"192.168.1.1\"}, id: \"" + vn1.getId() + "\"}, " +
-							"VirtualNode{parentNode: DefaultNode{name: \"192.168.1.1\"}, id: \"" + vn2.getId() + "\"}" +
+							"VirtualNode{rootNode: DefaultNode{name: \"192.168.1.1\"}, id: \"" + vn1.getId() + "\"}, " +
+							"VirtualNode{rootNode: DefaultNode{name: \"192.168.1.1\"}, id: \"" + vn2.getId() + "\"}" +
 						"]" +
 				"}"
 		);
