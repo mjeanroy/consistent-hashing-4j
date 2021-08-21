@@ -123,25 +123,10 @@ public final class Ring {
 	/**
 	 * Add new node into the ring.
 	 *
-	 * @param node New node to add.
+	 * @param name Node name.
 	 */
-	public void addNode(Node node) {
-		PreConditions.notNull(node, "Node cannot be null");
-
-		int hash = computeHash(node);
-		if (nodes.containsKey(hash)) {
-			throw new IllegalArgumentException("Node with hash <" + hash + "> already exists!");
-		}
-
-		List<VirtualNode> virtualNodes = createVirtualNodes(node);
-
-		// Add main node on the ring.
-		this.nodes.put(hash, node);
-
-		// Add virtual node on the ring.
-		for (VirtualNode virtualNode : virtualNodes) {
-			this.nodes.put(computeHash(virtualNode), virtualNode);
-		}
+	public void addNode(String name) {
+		addNode(Nodes.of(name));
 	}
 
 	/**
@@ -149,8 +134,27 @@ public final class Ring {
 	 *
 	 * @param name Node name.
 	 */
-	public void addNode(String name) {
-		addNode(Nodes.of(name));
+	public void addNode(String name, int nbVirtualNodes) {
+		addNode(Nodes.of(name), nbVirtualNodes);
+	}
+
+	/**
+	 * Add new node into the ring.
+	 *
+	 * @param node New node to add.
+	 */
+	public void addNode(Node node) {
+		internalAddNode(node, configuration.getNbVirtualNodes());
+	}
+
+	/**
+	 * Add new node into the ring.
+	 *
+	 * @param node New node to add.
+	 */
+	public void addNode(Node node, int nbVirtualNodes) {
+		PreConditions.isPositive(nbVirtualNodes, "Number of virtual nodes must be positive");
+		internalAddNode(node, nbVirtualNodes);
 	}
 
 	/**
@@ -171,6 +175,34 @@ public final class Ring {
 	 */
 	public void removeNode(String name) {
 		removeNode(Nodes.of(name));
+	}
+
+
+	/**
+	 * Add new node into the ring.
+	 *
+	 * @param node New node to add.
+	 * @param nbVirtualNodes The number of virtual nodes to create.
+	 */
+	private void internalAddNode(Node node, int nbVirtualNodes) {
+		PreConditions.notNull(node, "Node cannot be null");
+
+		int hash = computeHash(node);
+		if (nodes.containsKey(hash)) {
+			throw new IllegalArgumentException("Node with hash <" + hash + "> already exists!");
+		}
+
+		List<VirtualNode> virtualNodes = createVirtualNodes(node, nbVirtualNodes);
+
+		// Add main node on the ring.
+		this.nodes.put(hash, node);
+
+		// Add virtual node on the ring.
+		if (virtualNodes.size() > 0) {
+			for (VirtualNode virtualNode : virtualNodes) {
+				this.nodes.put(computeHash(virtualNode), virtualNode);
+			}
+		}
 	}
 
 	/**
@@ -231,7 +263,6 @@ public final class Ring {
 	}
 
 	private int computeHash(String value) {
-		// To keep it simple, force positive values.
 		return Math.abs(hashFunction().compute(value));
 	}
 
@@ -239,9 +270,8 @@ public final class Ring {
 		return computeHash(node.getName());
 	}
 
-	private List<VirtualNode> createVirtualNodes(Node parentNode) {
-		int nbVirtualNodes = nbVirtualNodes();
-		if (nbVirtualNodes == 0) {
+	private List<VirtualNode> createVirtualNodes(Node parentNode, int nbVirtualNodes) {
+		if (nbVirtualNodes <= 0) {
 			return Collections.emptyList();
 		}
 
@@ -256,9 +286,5 @@ public final class Ring {
 
 	private HashFunction hashFunction() {
 		return configuration.getHashFunction();
-	}
-
-	private int nbVirtualNodes() {
-		return configuration.getNbVirtualNodes();
 	}
 }

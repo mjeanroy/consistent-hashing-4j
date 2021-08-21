@@ -169,6 +169,20 @@ class RingTest {
 	}
 
 	@Test
+	void it_should_add_node_with_additional_virtual_nodes() {
+		RingConfiguration configuration = RingConfiguration.builder()
+				.nbVirtualNodes(2)
+				.build();
+
+		Ring ring = Ring.of(configuration);
+		ring.addNode("192.168.1.1", 3);
+		ring.addNode(Nodes.of("192.168.1.2"), 4);
+		ring.addNode("192.168.1.3", 5);
+
+		assertThat(ring.size()).isEqualTo(15);
+	}
+
+	@Test
 	void it_should_implement_equals_hash_code() {
 		EqualsVerifier.forClass(Ring.class).verify();
 	}
