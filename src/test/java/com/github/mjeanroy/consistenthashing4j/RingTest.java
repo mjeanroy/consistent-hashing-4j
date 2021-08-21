@@ -194,6 +194,12 @@ class RingTest {
 
 		ring.removeNode("192.168.1.2");
 		assertThat(ring.size()).isEqualTo(10);
+
+		ring.removeNode("192.168.1.3");
+		assertThat(ring.size()).isEqualTo(4);
+
+		ring.removeNode("192.168.1.1");
+		assertThat(ring.size()).isEqualTo(0);
 	}
 
 	@Test
