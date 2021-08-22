@@ -33,14 +33,14 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RingNodeTest {
+class ClusterNodeTest {
 
 	@Test
 	void it_should_create_node() {
 		Node rootNode = Nodes.of("192.168.1.1");
 		VirtualNode vn1 = new VirtualNode(rootNode);
 		VirtualNode vn2 = new VirtualNode(rootNode);
-		RingNode node = RingNode.of(rootNode, asList(vn1, vn2));
+		ClusterNode node = ClusterNode.of(rootNode, asList(vn1, vn2));
 
 		assertThat(node).isNotNull();
 		assertThat(node.getNode()).isSameAs(rootNode);
@@ -52,7 +52,7 @@ class RingNodeTest {
 	void it_should_create_node_from_virtual_node() {
 		Node rootNode = Nodes.of("192.168.1.1");
 		VirtualNode vn1 = new VirtualNode(rootNode);
-		RingNode node = RingNode.of(vn1, emptyList());
+		ClusterNode node = ClusterNode.of(vn1, emptyList());
 
 		assertThat(node).isNotNull();
 		assertThat(node.getNode()).isSameAs(vn1);
@@ -62,13 +62,13 @@ class RingNodeTest {
 
 	@Test
 	void it_should_implement_equals_hash_code() {
-		EqualsVerifier.forClass(RingNode.class).verify();
+		EqualsVerifier.forClass(ClusterNode.class).verify();
 	}
 
 	@Test
 	void it_should_implement_to_string() {
 		Node rootNode = Nodes.of("192.168.1.1");
-		RingNode node = RingNode.of(rootNode, asList(
+		ClusterNode node = ClusterNode.of(rootNode, asList(
 				new VirtualNode(rootNode),
 				new VirtualNode(rootNode)
 		));
@@ -78,7 +78,7 @@ class RingNodeTest {
 		VirtualNode vn2 = it.next();
 
 		assertThat(node).hasToString(
-				"RingNode{" +
+				"ClusterNode{" +
 						"node: DefaultNode{name: \"192.168.1.1\"}, " +
 						"virtualNodes: [" +
 							"VirtualNode{rootNode: DefaultNode{name: \"192.168.1.1\"}, id: \"" + vn1.getId() + "\"}, " +

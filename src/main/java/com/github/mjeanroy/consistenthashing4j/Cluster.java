@@ -35,93 +35,93 @@ import java.util.TreeMap;
 import static java.util.Collections.unmodifiableList;
 
 /**
- * Implementation of ring.
+ * Implementation of cluster.
  *
  * This class is not thread safe, adding node should be synchronized if needed!
  */
-public final class Ring {
+public final class Cluster {
 
 	/**
-	 * Create new ring with given nodes, each node being placed on the ring based on the given hash function.
+	 * Create new cluster with given nodes, each node being placed on a ring based on the given hash function.
 	 *
-	 * @param configuration The ring configuration.
+	 * @param configuration The cluster configuration.
 	 * @param nodes The nodes.
-	 * @return The ring.
+	 * @return The cluster.
 	 */
-	public static Ring of(RingConfiguration configuration, Collection<Node> nodes) {
-		Ring ring = new Ring(configuration);
+	public static Cluster of(ClusterConfiguration configuration, Collection<Node> nodes) {
+		Cluster cluster = new Cluster(configuration);
 		for (Node node: nodes) {
-			ring.addNode(node);
+			cluster.addNode(node);
 		}
 
-		return ring;
+		return cluster;
 	}
 
 	/**
-	 * Create new ring with given nodes, each node being placed on the ring based on a default hash function.
+	 * Create new cluster with given nodes, each node being placed on a ring based on a default hash function.
 	 *
 	 * @param nodes The nodes.
-	 * @return The ring.
+	 * @return The cluster.
 	 */
-	public static Ring of(Collection<Node> nodes) {
-		return Ring.of(RingConfiguration.defaultConfiguration(), nodes);
+	public static Cluster of(Collection<Node> nodes) {
+		return Cluster.of(ClusterConfiguration.defaultConfiguration(), nodes);
 	}
 
 	/**
-	 * Create new empty ring with given hash function.
+	 * Create new empty cluster with given hash function.
 	 *
-	 * @param configuration Ring configuration.
-	 * @return The ring.
+	 * @param configuration Cluster configuration.
+	 * @return The cluster.
 	 * @throws NullPointerException If {@code configuration} is {@code null}
 	 */
-	public static Ring of(RingConfiguration configuration) {
-		return Ring.of(configuration, Collections.emptyList());
+	public static Cluster of(ClusterConfiguration configuration) {
+		return Cluster.of(configuration, Collections.emptyList());
 	}
 
 	/**
-	 * Create new empty ring.
+	 * Create new empty cluster.
 	 *
-	 * @return The ring.
+	 * @return The cluster.
 	 */
-	public static Ring emptyRing() {
-		return Ring.of(RingConfiguration.defaultConfiguration(), Collections.emptyList());
+	public static Cluster emptyCluster() {
+		return Cluster.of(ClusterConfiguration.defaultConfiguration(), Collections.emptyList());
 	}
 
 	/**
-	 * List of nodes in the ring.
+	 * The ring.
 	 */
-	private final SortedMap<Integer, RingNode> nodes;
+	private final SortedMap<Integer, ClusterNode> ring;
 
 	/**
-	 * Ring configuration.
+	 * Cluster configuration.
 	 */
-	private final RingConfiguration configuration;
+	private final ClusterConfiguration configuration;
 
-	private Ring(RingConfiguration configuration) {
-		this.nodes = new TreeMap<>();
-		this.configuration = PreConditions.notNull(configuration, "Ring configuration must be defined");
+	private Cluster(ClusterConfiguration configuration) {
+		this.ring = new TreeMap<>();
+		this.configuration = PreConditions.notNull(configuration, "Cluster configuration must be defined");
 	}
 
 	/**
-	 * Get ring size.
+	 * Get cluster size.
 	 *
-	 * @return Ring size.
+	 * @return Cluster size.
 	 */
 	public int size() {
-		return nodes.size();
+		return ring.size();
 	}
 
 	/**
-	 * Check if given ring is empty.
+	 * Check if given cluster is empty.
 	 *
-	 * @return {@code true} if ring is empty, {@code false} otherwise.
+	 * @return {@code true} if cluster is empty, {@code false} otherwise.
 	 */
 	public boolean isEmpty() {
-		return nodes.isEmpty();
+		return ring.isEmpty();
 	}
 
 	/**
-	 * Add new node into the ring.
+	 * Add new node into the cluster.
 	 *
 	 * @param name Node name.
 	 */
@@ -130,7 +130,7 @@ public final class Ring {
 	}
 
 	/**
-	 * Add new node into the ring.
+	 * Add new node into the cluster.
 	 *
 	 * @param name Node name.
 	 */
@@ -139,7 +139,7 @@ public final class Ring {
 	}
 
 	/**
-	 * Add new node into the ring.
+	 * Add new node into the cluster.
 	 *
 	 * @param node New node to add.
 	 */
@@ -148,7 +148,7 @@ public final class Ring {
 	}
 
 	/**
-	 * Add new node into the ring.
+	 * Add new node into the cluster.
 	 *
 	 * @param node New node to add.
 	 */
@@ -159,23 +159,23 @@ public final class Ring {
 
 	/**
 	 *
-	 * Remove given node from the ring.
+	 * Remove given node from the cluster.
 	 *
 	 * @param node Node to remove.
 	 */
 	public void removeNode(Node node) {
-		RingNode removedNode = nodes.remove(computeHash(node));
+		ClusterNode removedNode = ring.remove(computeHash(node));
 
 		if (removedNode != null) {
 			for (VirtualNode virtualNode : removedNode.getVirtualNodes()) {
-				nodes.remove(computeHash(virtualNode));
+				ring.remove(computeHash(virtualNode));
 			}
 		}
 	}
 
 	/**
 	 *
-	 * Remove given node name from the ring.
+	 * Remove given node name from the cluster.
 	 *
 	 * @param name Node name to remove.
 	 */
@@ -185,7 +185,7 @@ public final class Ring {
 
 
 	/**
-	 * Add new node into the ring.
+	 * Add new node into the cluster.
 	 *
 	 * @param node New node to add.
 	 * @param nbVirtualNodes The number of virtual nodes to create.
@@ -194,19 +194,19 @@ public final class Ring {
 		PreConditions.notNull(node, "Node cannot be null");
 
 		int hash = computeHash(node);
-		if (nodes.containsKey(hash)) {
+		if (ring.containsKey(hash)) {
 			throw new IllegalArgumentException("Node with hash <" + hash + "> already exists!");
 		}
 
 		List<VirtualNode> virtualNodes = createVirtualNodes(node, nbVirtualNodes);
 
 		// Add main node on the ring.
-		this.nodes.put(hash, RingNode.of(node, virtualNodes));
+		this.ring.put(hash, ClusterNode.of(node, virtualNodes));
 
 		// Add virtual node on the ring.
 		if (virtualNodes.size() > 0) {
 			for (VirtualNode virtualNode : virtualNodes) {
-				this.nodes.put(computeHash(virtualNode), RingNode.of(virtualNode));
+				this.ring.put(computeHash(virtualNode), ClusterNode.of(virtualNode));
 			}
 		}
 	}
@@ -218,19 +218,19 @@ public final class Ring {
 	 * @return The node.
 	 */
 	public Node findNode(String value) {
-		PreConditions.notEmpty(nodes, "Cannot find node from an empty ring");
+		PreConditions.notEmpty(ring, "Cannot find node from an empty cluster");
 		PreConditions.notNull(value, "Cannot find node for null value");
 
 		int hash = computeHash(value);
-		if (nodes.containsKey(hash)) {
-			return nodes.get(hash).rootNode();
+		if (ring.containsKey(hash)) {
+			return ring.get(hash).rootNode();
 		}
 
 		// Get next node on the ring.
-		SortedMap<Integer, RingNode> tailMap = nodes.tailMap(hash);
+		SortedMap<Integer, ClusterNode> tailMap = ring.tailMap(hash);
 		if (tailMap.isEmpty()) {
 			// If we don't have a "next" node, get the first one.
-			tailMap = nodes;
+			tailMap = ring;
 		}
 
 		return tailMap.get(tailMap.firstKey()).rootNode();
@@ -242,9 +242,9 @@ public final class Ring {
 			return true;
 		}
 
-		if (o instanceof Ring) {
-			Ring r = (Ring) o;
-			return Objects.equals(nodes, r.nodes) && Objects.equals(configuration, r.configuration);
+		if (o instanceof Cluster) {
+			Cluster r = (Cluster) o;
+			return Objects.equals(ring, r.ring) && Objects.equals(configuration, r.configuration);
 		}
 
 		return false;
@@ -252,13 +252,13 @@ public final class Ring {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(nodes, configuration);
+		return Objects.hash(ring, configuration);
 	}
 
 	@Override
 	public String toString() {
 		return ToStringBuilder.of(getClass())
-				.append("nodes", nodes)
+				.append("ring", ring)
 				.append("configuration", configuration)
 				.build();
 	}

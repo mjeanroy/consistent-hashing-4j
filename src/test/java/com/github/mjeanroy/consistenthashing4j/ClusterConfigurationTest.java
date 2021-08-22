@@ -29,11 +29,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RingConfigurationTest {
+class ClusterConfigurationTest {
 
 	@Test
 	void it_should_create_default_configuration() {
-		RingConfiguration configuration = RingConfiguration.defaultConfiguration();
+		ClusterConfiguration configuration = ClusterConfiguration.defaultConfiguration();
 		assertThat(configuration).isNotNull();
 		assertThat(configuration.getHashFunction()).isNotNull();
 	}
@@ -41,7 +41,7 @@ class RingConfigurationTest {
 	@Test
 	void it_should_create_custom_configuration() {
 		HashFunction hashFunction = HashFunctions.jdkHashFunction();
-		RingConfiguration configuration = RingConfiguration.builder()
+		ClusterConfiguration configuration = ClusterConfiguration.builder()
 				.hashFunction(hashFunction)
 				.build();
 
@@ -51,19 +51,19 @@ class RingConfigurationTest {
 
 	@Test
 	void it_should_implement_equals_hash_code() {
-		EqualsVerifier.forClass(RingConfiguration.class).verify();
+		EqualsVerifier.forClass(ClusterConfiguration.class).verify();
 	}
 
 	@Test
 	void it_should_implement_to_string() {
 		HashFunction hashFunction = HashFunctions.jdkHashFunction();
-		RingConfiguration configuration = RingConfiguration.builder()
+		ClusterConfiguration configuration = ClusterConfiguration.builder()
 				.hashFunction(hashFunction)
 				.nbVirtualNodes(2)
 				.build();
 
 		assertThat(configuration).hasToString(
-				"RingConfiguration{" +
+				"ClusterConfiguration{" +
 						"hashFunction: " + hashFunction.toString() + ", " +
 						"nbVirtualNodes: 2" +
 				"}"

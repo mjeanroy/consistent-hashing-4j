@@ -27,12 +27,12 @@ package com.github.mjeanroy.consistenthashing4j;
 import java.util.Objects;
 
 /**
- * Ring configuration.
+ * Cluster configuration.
  */
-public final class RingConfiguration {
+public final class ClusterConfiguration {
 
 	/**
-	 * Get new {@link RingConfiguration} builder.
+	 * Get new {@link ClusterConfiguration} builder.
 	 *
 	 * @return New builder.
 	 */
@@ -45,7 +45,7 @@ public final class RingConfiguration {
 	 *
 	 * @return Default configuration.
 	 */
-	public static RingConfiguration defaultConfiguration() {
+	public static ClusterConfiguration defaultConfiguration() {
 		return builder().build();
 	}
 
@@ -56,7 +56,7 @@ public final class RingConfiguration {
 
 	private final int nbVirtualNodes;
 
-	private RingConfiguration(HashFunction hashFunction, int nbVirtualNodes) {
+	private ClusterConfiguration(HashFunction hashFunction, int nbVirtualNodes) {
 		this.hashFunction = PreConditions.notNull(hashFunction, "Hash function must be defined");
 		this.nbVirtualNodes = PreConditions.isPositive(nbVirtualNodes, "Number of virtual node must be positive");
 	}
@@ -85,8 +85,8 @@ public final class RingConfiguration {
 			return true;
 		}
 
-		if (o instanceof RingConfiguration) {
-			RingConfiguration rc = (RingConfiguration) o;
+		if (o instanceof ClusterConfiguration) {
+			ClusterConfiguration rc = (ClusterConfiguration) o;
 			return Objects.equals(hashFunction, rc.hashFunction) && Objects.equals(nbVirtualNodes, rc.nbVirtualNodes);
 		}
 
@@ -107,16 +107,16 @@ public final class RingConfiguration {
 	}
 
 	/**
-	 * Builder for {@link RingConfiguration}
+	 * Builder for {@link ClusterConfiguration}
 	 */
 	public static final class Builder {
 		/**
-		 * Hash function that will be used to compute hash for each node in the ring.
+		 * Hash function that will be used to compute hash for each node in the cluster.
 		 */
 		private HashFunction hashFunction;
 
 		/**
-		 * Number of virtual nodes to add for each parent node on the ring.
+		 * Number of virtual nodes to add for each parent node on the cluster.
 		 */
 		private int nbVirtualNodes;
 
@@ -154,8 +154,8 @@ public final class RingConfiguration {
 		 * @throws NullPointerException If {@link #hashFunction} is {@code null}
 		 * @throws IllegalArgumentException If {@link #nbVirtualNodes} is strictly less than zero
 		 */
-		public RingConfiguration build() {
-			return new RingConfiguration(
+		public ClusterConfiguration build() {
+			return new ClusterConfiguration(
 					hashFunction,
 					nbVirtualNodes
 			);

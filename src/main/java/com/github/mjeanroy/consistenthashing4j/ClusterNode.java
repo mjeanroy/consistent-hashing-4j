@@ -30,20 +30,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-final class RingNode {
+final class ClusterNode {
 
-	static RingNode of(Node node, Collection<VirtualNode> virtualNodes) {
-		return new RingNode(node, virtualNodes);
+	static ClusterNode of(Node node, Collection<VirtualNode> virtualNodes) {
+		return new ClusterNode(node, virtualNodes);
 	}
 
-	static RingNode of(Node node) {
-		return new RingNode(node, Collections.emptyList());
+	static ClusterNode of(Node node) {
+		return new ClusterNode(node, Collections.emptyList());
 	}
 
 	private final Node node;
 	private final List<VirtualNode> virtualNodes;
 
-	private RingNode(Node node, Collection<VirtualNode> virtualNodes) {
+	private ClusterNode(Node node, Collection<VirtualNode> virtualNodes) {
 		this.node = PreConditions.notNull(node, "Node must be defined");
 		this.virtualNodes = Collections.unmodifiableList(new ArrayList<>(
 				PreConditions.notNull(virtualNodes, "Virtual nodes must be defined")
@@ -69,8 +69,8 @@ final class RingNode {
 			return true;
 		}
 
-		if (o instanceof RingNode) {
-			RingNode n = (RingNode) o;
+		if (o instanceof ClusterNode) {
+			ClusterNode n = (ClusterNode) o;
 			return Objects.equals(node, n.node) && Objects.equals(virtualNodes, n.virtualNodes);
 		}
 
